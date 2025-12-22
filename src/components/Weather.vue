@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Droplets, Wind } from 'lucide-vue-next';
+import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Droplets, Wind, Umbrella, Thermometer, Eye, Zap } from 'lucide-vue-next';
 import { mapWmoCode, weatherIcons } from '../utils/weather';
 import type { WeatherInfo } from '../types';
 
@@ -18,7 +18,7 @@ const iconMap: Record<string, any> = {
 };
 
 async function fetchWeather(lat: number, lon: number, locationName?: string) {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=relativehumidity_2m,apparent_temperature,visibility&daily=temperature_2m_max,temperature_2m_min,uv_index_max,precipitation_probability_max&timezone=auto`;
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -99,7 +99,7 @@ onUnmounted(() => {
   <div 
     id="weather-container" 
     @click="getLocationAndWeather"
-    class="weather-clickable grid grid-cols-1 md:grid-cols-3 gap-10 w-full border-t border-white/5 pt-10 transition-opacity duration-700"
+    class="weather-clickable grid grid-cols-1 md:grid-cols-3 gap-4 w-full pt-10 transition-opacity duration-700"
     :class="{ 'opacity-30': loading, 'opacity-100': !loading }"
   >
     <!-- 状态与定位 -->
@@ -114,7 +114,7 @@ onUnmounted(() => {
     </div>
 
     <!-- 温度显示（含最高/最低） -->
-    <div class="flex items-center justify-center border-x border-white/5 px-6 gap-6">
+    <div class="flex items-center justify-center px-6 gap-6">
       <div class="flex items-end">
         <div class="text-8xl font-extralight mr-1" id="temp-val">
           {{ weatherData ? Math.round(weatherData.current_weather.temperature) : '--' }}
@@ -140,12 +140,20 @@ onUnmounted(() => {
         <Droplets class="w-8 h-8 text-blue-400 opacity-80" />
       </div>
       <div class="flex items-center gap-3">
-        <span id="wind-val" class="text-white text-4xl tabular-nums">
-          {{ weatherData ? weatherData.current_weather.windspeed : '--' }}km/h
+        <span id="uv-val" class="text-white text-4xl tabular-nums">
+          {{ weatherData ? Math.round(weatherData.daily.uv_index_max[0]) : '--' }}
         </span> 
-        <Wind class="w-8 h-8 text-slate-400 opacity-80" />
+        <Zap class="w-8 h-8 text-yellow-400 opacity-80" />
       </div>
     </div>
+
+    <!-- 追加行：更多详细指标 -->
+     <div class="text-white/60 col-span-full text-center mt-4">
+      今日降雨概率 <span class="text-blue-400 text-xl tabular-nums">{{ weatherData ? weatherData.daily.precipitation_probability_max[0] : '--' }}%</span> ·
+      体感温度 <span class="text-orange-400 text-xl tabular-nums">{{ weatherData ? Math.round(weatherData.hourly.apparent_temperature[0]) : '--' }}°C</span> ·
+      风速 <span class="text-slate-400 text-xl tabular-nums">{{ weatherData ? weatherData.current_weather.windspeed : '--' }} km/h</span> ·
+      能见度 <span class="text-emerald-400 text-xl tabular-nums">{{ weatherData ? (weatherData.hourly.visibility[0] / 1000).toFixed(1) : '--' }} km</span>
+     </div>
   </div>
 </template>
 

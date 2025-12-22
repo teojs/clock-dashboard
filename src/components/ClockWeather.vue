@@ -11,9 +11,9 @@ function toggleSeconds() {
 </script>
 
 <template>
-  <div class="glass-panel p-4 md:p-8 flex flex-col items-center text-white w-full">
+  <div class="glass-panel h-full p-4 md:p-8 flex flex-col items-center justify-evenly text-white w-full">
     <!-- 日期与农历 -->
-    <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-4 w-full justify-center">
+    <div class="flex flex-col md:flex-row items-center md:items-start gap-6 w-full justify-center">
       <div class="flex items-center gap-4">
         <div class="date-day-big text-glow">{{ now.getDate() }}</div>
         <div class="flex flex-col mt-2">

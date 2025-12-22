@@ -102,13 +102,13 @@ onUnmounted(() => {
       class="main-slider flex h-full transition-transform duration-700 cubic-bezier"
       :style="{ transform: `translateX(-${currentPage * 100}vw)`, width: '300vw' }"
     >
-      <div class="slide-page w-[100vw] h-full flex items-center justify-center flex-shrink-0">
+      <div class="slide-page w-screen h-screen flex items-center justify-center flex-shrink-0">
         <SmartHome ref="smartHomeRef" @open-settings="showSettings = true" />
       </div>
-      <div class="slide-page w-[100vw] h-full flex items-center justify-center flex-shrink-0">
+      <div class="slide-page w-screen h-screen flex items-center justify-center flex-shrink-0">
         <ClockWeather />
       </div>
-      <div class="slide-page w-[100vw] h-full flex items-center justify-center flex-shrink-0">
+      <div class="slide-page w-screen h-screen flex items-center justify-center flex-shrink-0">
         <CalendarView ref="calendarRef" />
       </div>
     </div>
