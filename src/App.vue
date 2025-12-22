@@ -8,6 +8,7 @@ import SettingsModal from './components/SettingsModal.vue';
 const currentPage = ref(1);
 const showSettings = ref(false);
 const smartHomeRef = ref<any>(null);
+const calendarRef = ref<any>(null);
 
 let startX = 0;
 let autoReturnTimer: number | null = null;
@@ -32,6 +33,11 @@ function goToPage(page: number) {
   // 切换到智能首页 (page 0) 时更新状态
   if (page === 0 && smartHomeRef.value) {
     smartHomeRef.value.updateAllStates();
+  }
+  
+  // 切换到日历看板 (page 2) 时更新当前日期
+  if (page === 2 && calendarRef.value) {
+    calendarRef.value.refreshToday();
   }
 }
 
@@ -103,7 +109,7 @@ onUnmounted(() => {
         <ClockWeather />
       </div>
       <div class="slide-page w-[100vw] h-full flex items-center justify-center flex-shrink-0">
-        <CalendarView />
+        <CalendarView ref="calendarRef" />
       </div>
     </div>
 

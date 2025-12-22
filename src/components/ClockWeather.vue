@@ -40,14 +40,18 @@ function toggleSeconds() {
     >
       <Digit :value="h1" :trigger="showSeconds ? now.getTime() : Math.floor(now.getTime() / 60000)" />
       <Digit :value="h2" :trigger="showSeconds ? now.getTime() : Math.floor(now.getTime() / 60000)" />
+      
       <div class="clock-separator">:</div>
+      
       <Digit :value="m1" :trigger="showSeconds ? now.getTime() : Math.floor(now.getTime() / 60000)" />
       <Digit :value="m2" :trigger="showSeconds ? now.getTime() : Math.floor(now.getTime() / 60000)" />
-      <div v-if="showSeconds" class="seconds-container flex items-center">
-        <div class="clock-separator">:</div>
-        <Digit :value="s1" :trigger="now.getTime()" />
-        <Digit :value="s2" :trigger="now.getTime()" />
-      </div>
+      
+      <div v-if="showSeconds" class="clock-separator second-separator">:</div>
+      
+      <template v-if="showSeconds">
+        <Digit class="second-digit" :value="s1" :trigger="now.getTime()" />
+        <Digit class="second-digit" :value="s2" :trigger="now.getTime()" />
+      </template>
     </div>
 
     <!-- 天气展示 -->
@@ -80,7 +84,6 @@ function toggleSeconds() {
   font-size: 22rem; /* iOS 12 Fallback 2: 强制大字号 */
   font-size: clamp(10rem, 35vw, 25rem);
   font-weight: 1000;
-  letter-spacing: -0.05em; /* 增加负间距 */
   line-height: 1.1;
   -webkit-text-stroke: 2px white; /* 恢复适中的描边加粗 */
 }
@@ -90,12 +93,18 @@ function toggleSeconds() {
 }
 
 .clock-separator {
-  opacity: 0.6;
-  margin: 0 -0.1em; /* 进一步减少冒号间距 */
+  opacity: 1;
+  text-align: center;
+  margin: 0 -0.1em; /* 适当重叠，但比数字间距小 */
   font-weight: 700;
+  display: flex;
+  justify-content: center;
+  line-height: 1;
+  position: relative;
+  top: -0.05em; /* 稍微上移一点，视觉上更垂直居中 */
 }
 
-.seconds-container {
+.second-separator, .second-digit {
   opacity: 0.6;
 }
 </style>

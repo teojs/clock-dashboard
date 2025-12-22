@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-vue-next';
 import { getLunarDate } from '../utils/lunar';
 
 const currentMonthDate = ref(new Date());
-const today = new Date();
+const today = ref(new Date());
 
 const year = computed(() => currentMonthDate.value.getFullYear());
 const month = computed(() => currentMonthDate.value.getMonth());
@@ -12,7 +12,7 @@ const month = computed(() => currentMonthDate.value.getMonth());
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 const isCurrentMonth = computed(() => {
-  return year.value === today.getFullYear() && month.value === today.getMonth();
+  return year.value === today.value.getFullYear() && month.value === today.value.getMonth();
 });
 
 const calendarDays = computed(() => {
@@ -36,7 +36,7 @@ const calendarDays = computed(() => {
     days.push({ 
       date: d, 
       isOtherMonth: false, 
-      isToday: d.toDateString() === today.toDateString(),
+      isToday: d.toDateString() === today.value.toDateString(),
       lunar: getLunarDate(d) 
     });
   }
@@ -58,8 +58,19 @@ function changeMonth(delta: number) {
 }
 
 function goToToday() {
+  today.value = new Date();
   currentMonthDate.value = new Date();
 }
+
+function refreshToday() {
+  today.value = new Date();
+  // 如果当前正在看“今天”所在的月份，则确保视图也是最新的
+  if (isCurrentMonth.value) {
+    currentMonthDate.value = new Date();
+  }
+}
+
+defineExpose({ refreshToday });
 </script>
 
 <template>
