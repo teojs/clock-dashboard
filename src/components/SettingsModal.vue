@@ -5,6 +5,7 @@ import type { HAConfig, HAEntity } from '../types';
 
 const props = defineProps<{
   show: boolean;
+  entitiesStates?: Record<string, any>;
 }>();
 
 const emit = defineEmits(['close', 'saved']);
@@ -143,7 +144,7 @@ function save() {
                   v-model="entity.name" 
                   type="text" 
                   class="w-24 md:w-32 bg-white/5 border border-white/10 text-white rounded-xl px-4 py-2 outline-none focus:border-white/30" 
-                  placeholder="备注名"
+                  :placeholder="props.entitiesStates?.[entity.id]?.attributes?.friendly_name || '备注名'"
                 >
                 <button @click="removeEntity(index)" class="p-2 text-red-400 hover:bg-red-400/10 rounded-lg">
                   <Trash2 class="w-5 h-5" />

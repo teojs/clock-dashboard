@@ -16,6 +16,7 @@ export interface WeatherInfo {
 
 export interface LunarInfo {
   fullDate: string;
+  month: string;
   date: string;
   year: string;
 }

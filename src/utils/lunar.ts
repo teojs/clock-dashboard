@@ -19,14 +19,16 @@ export function getLunarDate(date: Date): LunarInfo {
     return {
       fullDate: `${month}月${day}`, // 例如：冬月十五
       date: day === '初一' ? `${month}月` : day, // 初一时显示月份名
-      year: `${yearGanzhi}年` // 例如：乙巳年
+      year: `${yearGanzhi}年`, // 例如：乙巳年
+      month: `${month}月`, // 例如：冬月
     };
   } catch (e) {
     console.error("Lunar date error (lunar-typescript):", e);
     return { 
       fullDate: "加载失败", 
       date: "加载失败", 
-      year: "--年" 
+      year: "--年",
+      month: "加载失败"
     };
   }
 }

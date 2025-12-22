@@ -127,6 +127,7 @@ onUnmounted(() => {
     <!-- Settings Modal -->
     <SettingsModal 
       :show="showSettings" 
+      :entities-states="smartHomeRef?.entitiesStates || {}"
       @close="showSettings = false" 
       @saved="onSettingsSaved"
     />

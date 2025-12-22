@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { Settings, Lightbulb, LightbulbOff, Power, Fan, Tv, Zap, Loader2, RotateCw, Blinds } from 'lucide-vue-next';
+import { ref, onMounted, computed } from 'vue';
+import { Settings, Lightbulb, LightbulbOff, Power, Fan, Tv, Zap, Loader2, RotateCw, Blinds, Snowflake, Thermometer, Droplets } from 'lucide-vue-next';
 import type { HAConfig } from '../types';
 
 const emit = defineEmits(['open-settings']);
@@ -10,10 +10,30 @@ const entitiesStates = ref<Record<string, any>>({});
 const loadingStates = ref<Record<string, boolean>>({});
 const isRefreshing = ref(false);
 
+// 计算要在顶部标题显示的温湿度信息（取第一个空调设备的数据）
+const headerClimateInfo = computed(() => {
+  const climateEntity = haConfig.value.entities.find(e => e.id.startsWith('climate.'));
+  if (!climateEntity) return null;
+  
+  const state = entitiesStates.value[climateEntity.id];
+  if (!state || !state.attributes) return null;
+  
+  const { current_temperature, current_humidity } = state.attributes;
+  if (current_temperature === undefined && current_humidity === undefined) return null;
+  
+  return {
+    temp: current_temperature,
+    humi: current_humidity
+  };
+});
+
 function isEntityOn(entityId: string) {
   const state = entitiesStates.value[entityId]?.state;
   if (entityId.startsWith('cover.')) {
     return state === 'open';
+  }
+  if (entityId.startsWith('climate.')) {
+    return state !== 'off' && state !== 'unavailable';
   }
   return state === 'on';
 }
@@ -24,6 +44,7 @@ function getIcon(domain: string, isOn: boolean) {
   if (domain === 'fan') return Fan;
   if (domain === 'media_player') return Tv;
   if (domain === 'cover') return Blinds;
+  if (domain === 'climate') return Snowflake;
   return Zap;
 }
 
@@ -69,6 +90,8 @@ async function toggleEntity(entityId: string) {
   let service = '';
   if (domain === 'cover') {
     service = isOn ? 'close_cover' : 'open_cover';
+  } else if (domain === 'climate') {
+    service = isOn ? 'turn_off' : 'turn_on';
   } else {
     service = isOn ? 'turn_off' : 'turn_on';
   }
@@ -97,13 +120,25 @@ onMounted(() => {
   updateAllStates();
 });
 
-defineExpose({ updateAllStates });
+defineExpose({ updateAllStates, entitiesStates });
 </script>
 
 <template>
   <div class="glass-panel p-8 md:p-14 flex flex-col items-center text-white h-full justify-start overflow-y-auto w-full">
     <div class="flex items-center justify-between w-full mb-10">
-      <h2 class="text-4xl font-bold tracking-widest">智能控制</h2>
+      <div class="flex items-baseline gap-6">
+        <h2 class="text-4xl font-bold tracking-widest text-nowrap">智能控制</h2>
+        <div v-if="headerClimateInfo" class="flex items-center gap-6 opacity-60">
+          <div v-if="headerClimateInfo.temp !== undefined" class="flex items-center gap-2">
+            <Thermometer class="w-5 h-5 text-orange-400" />
+            <span class="text-2xl font-medium tabular-nums">{{ headerClimateInfo.temp }}°</span>
+          </div>
+          <div v-if="headerClimateInfo.humi !== undefined" class="flex items-center gap-2">
+            <Droplets class="w-5 h-5 text-blue-400" />
+            <span class="text-2xl font-medium tabular-nums">{{ headerClimateInfo.humi }}%</span>
+          </div>
+        </div>
+      </div>
       <div class="flex gap-4">
         <button 
           @click="updateAllStates" 
@@ -126,17 +161,37 @@ defineExpose({ updateAllStates });
         :class="{ 'on': isEntityOn(entity.id), 'opacity-50 pointer-events-none': loadingStates[entity.id] }"
         @click="toggleEntity(entity.id)"
       >
-        <div class="w-12 h-12 flex items-center justify-center rounded-full transition-colors"
-             :class="isEntityOn(entity.id) ? 'bg-white text-black' : 'bg-white/10 text-white'">
-          <Loader2 v-if="loadingStates[entity.id]" class="w-6 h-6 animate-spin" />
-          <component v-else :is="getIcon(entity.id.split('.')[0], isEntityOn(entity.id))" class="w-6 h-6" />
+        <div class="flex items-center justify-between w-full">
+          <div class="w-12 h-12 flex items-center justify-center rounded-full transition-colors"
+               :class="isEntityOn(entity.id) ? 'bg-white text-black' : 'bg-white/10 text-white'">
+            <Loader2 v-if="loadingStates[entity.id]" class="w-6 h-6 animate-spin" />
+            <component v-else :is="getIcon(entity.id.split('.')[0], isEntityOn(entity.id))" class="w-6 h-6" />
+          </div>
+
+          <!-- 右侧温湿度 (针对空调/climate) -->
+          <div v-if="entity.id.startsWith('climate.') && entitiesStates[entity.id]?.attributes" class="flex gap-4 text-sm font-medium opacity-80">
+            <div v-if="entitiesStates[entity.id].attributes.current_temperature !== undefined" class="flex items-center gap-1.5">
+              <Thermometer class="w-4 h-4 text-orange-400" />
+              <span class="text-base">{{ entitiesStates[entity.id].attributes.current_temperature }}°</span>
+            </div>
+            <div v-if="entitiesStates[entity.id].attributes.current_humidity !== undefined" class="flex items-center gap-1.5">
+              <Droplets class="w-4 h-4 text-blue-400" />
+              <span class="text-base">{{ entitiesStates[entity.id].attributes.current_humidity }}%</span>
+            </div>
+          </div>
         </div>
+
         <div class="flex flex-col overflow-hidden w-full">
           <span class="font-bold text-lg truncate w-full">
             {{ entity.name || (entitiesStates[entity.id] && entitiesStates[entity.id].attributes && entitiesStates[entity.id].attributes.friendly_name) || entity.id }}
           </span>
           <span class="text-sm opacity-50 uppercase tracking-widest">
-            {{ isEntityOn(entity.id) ? (entity.id.startsWith('cover.') ? '已开启' : '已开启') : (entity.id.startsWith('cover.') ? '已关闭' : '已关闭') }}
+            <template v-if="entity.id.startsWith('climate.') && isEntityOn(entity.id)">
+              {{ entitiesStates[entity.id]?.attributes?.temperature ? `${entitiesStates[entity.id].attributes.temperature}°C` : '已开启' }}
+            </template>
+            <template v-else>
+              {{ isEntityOn(entity.id) ? '已开启' : '已关闭' }}
+            </template>
           </span>
         </div>
       </div>
@@ -160,6 +215,7 @@ defineExpose({ updateAllStates });
   gap: 1rem;
   transition: all 0.3s ease;
   cursor: pointer;
+  position: relative;
 }
 
 .ha-card.on {
