@@ -169,6 +169,11 @@ function save() {
             <span>支持地址、令牌、设备列表全量导入导出</span>
             <span>格式: { "url": "...", "token": "...", "entities": [...] }</span>
           </div>
+          <div class="mt-4 p-4 bg-orange-500/10 border border-orange-500/20 rounded-xl">
+            <p class="text-xs text-orange-200/60 leading-relaxed">
+              <strong>💡 跨域提示：</strong> 如果接口无法加载，请确保在 Home Assistant 的 <code>configuration.yaml</code> 中配置了 <code>cors_allowed_origins</code>，包含当前看板的访问域名或 IP。
+            </p>
+          </div>
         </div>
       </div>
 
