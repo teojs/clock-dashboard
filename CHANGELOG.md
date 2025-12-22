@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/teojs/clock-dashboard/compare/v1.1.0...v1.2.0) (2025-12-22)
+
+
+### Features
+
+* **weather:** display actual city name instead of coordinates using reverse geocoding ([7410555](https://github.com/teojs/clock-dashboard/commit/7410555af8be7e77fe4997e5d5d2f14bd6bcb7eb))
+
 ## [1.1.0](https://github.com/teojs/clock-dashboard/compare/v1.0.5...v1.1.0) (2025-12-22)
 
 
