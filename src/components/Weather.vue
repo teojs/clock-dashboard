@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Droplets, Wind, Umbrella, Thermometer, Eye, Zap } from 'lucide-vue-next';
+import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, Droplets, Zap, PersonStanding } from 'lucide-vue-next';
 import { mapWmoCode, weatherIcons } from '../utils/weather';
 import type { WeatherInfo } from '../types';
 
@@ -99,7 +99,7 @@ onUnmounted(() => {
   <div 
     id="weather-container" 
     @click="getLocationAndWeather"
-    class="weather-clickable grid grid-cols-1 md:grid-cols-3 gap-4 w-full pt-10 transition-opacity duration-700"
+    class="weather-clickable grid grid-cols-1 md:grid-cols-3 gap-3 w-full pt-10 transition-opacity duration-700"
     :class="{ 'opacity-30': loading, 'opacity-100': !loading }"
   >
     <!-- 状态与定位 -->
@@ -117,7 +117,7 @@ onUnmounted(() => {
     </div>
 
     <!-- 温度显示（含最高/最低） -->
-    <div class="flex items-center justify-center px-6 gap-6">
+    <div class="flex items-center justify-center px-4 gap-6">
       <div class="flex items-end">
         <div class="text-8xl font-extralight mr-1" id="temp-val">
           {{ weatherData ? Math.round(weatherData.current_weather.temperature) : '--' }}
@@ -146,7 +146,7 @@ onUnmounted(() => {
         <span id="apparent-temp-val">
           {{ weatherData ? Math.round(weatherData.hourly.apparent_temperature[0]) : '--' }}°C
         </span> 
-        <Thermometer class="w-8 h-8 text-orange-500/60" />
+        <PersonStanding class="w-8 h-8 text-orange-500/60" />
         <span id="uv-val">
           {{ weatherData ? Math.round(weatherData.daily.uv_index_max[0]) : '--' }}
         </span> 
