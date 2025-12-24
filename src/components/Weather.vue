@@ -12,7 +12,7 @@ const weatherInfo = ref<WeatherInfo>({ text: '点击刷新', icon: mapWmoCode(-1
 // 存储位置缓存，避免重复请求定位接口
 const cachedCoords = ref<{ lat: number, lon: number, city: string } | null>(null)
 
-async function fetchWeather(lat: number, lon: number, locationName?: string) {
+async function fetchWeather(lat: number, lon: number, locationName?: string, isRealLocation: boolean = false) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,rain,wind_speed_10m,is_day,apparent_temperature,showers,relative_humidity_2m,precipitation,weather_code&hourly=precipitation_probability,uv_index,temperature_2m&timezone=auto&forecast_days=1`
   try {
     const response = await fetch(url)
@@ -28,8 +28,10 @@ async function fetchWeather(lat: number, lon: number, locationName?: string) {
 
     if (locationName) {
       locationText.value = locationName
-      // 更新位置缓存
-      cachedCoords.value = { lat, lon, city: locationName }
+      // 只有真实获取到的位置才进行缓存
+      if (isRealLocation) {
+        cachedCoords.value = { lat, lon, city: locationName }
+      }
     }
     else if (locationText.value.includes('定位中')) {
       locationText.value = `${lon.toFixed(2)}, ${lat.toFixed(2)}`
@@ -60,13 +62,15 @@ async function fetchByIp() {
     const data = await res.json()
     if (data.latitude && data.longitude) {
       const city = data.city || data.locality || data.principalSubdivision || '未知城市'
-      await fetchWeather(data.latitude, data.longitude, city)
+      // 标记为真实位置，可以缓存
+      await fetchWeather(data.latitude, data.longitude, city, true)
     }
     else {
       throw new Error('定位失败')
     }
   }
   catch (e) {
+    // 失败时不传真实位置标记，不缓存
     await fetchWeather(39.9, 116.4, '北京市 (默认)')
   }
 }
@@ -77,7 +81,7 @@ async function getLocationAndWeather() {
   // 如果已有缓存的坐标，直接使用缓存获取天气，不再请求定位接口
   if (cachedCoords.value) {
     const { lat, lon, city } = cachedCoords.value
-    await fetchWeather(lat, lon, city)
+    await fetchWeather(lat, lon, city, true)
     return
   }
 
@@ -88,7 +92,8 @@ async function getLocationAndWeather() {
           const lat = p.coords.latitude
           const lon = p.coords.longitude
           const city = await reverseGeocode(lat, lon)
-          await fetchWeather(lat, lon, city)
+          // 标记为真实位置，可以缓存
+          await fetchWeather(lat, lon, city, true)
         },
         async () => await fetchByIp(),
         { timeout: 5000 },
@@ -151,10 +156,10 @@ onUnmounted(() => {
       </div>
       <div class="flex flex-col items-end justify-between gap-2">
         <span id="temp-max" class="text-3xl font-medium text-red-200">
-          {{ weatherData ? Math.max(...weatherData.hourly.temperature_2m) : '--' }}°
+          {{ weatherData ? Math.round(Math.max(...weatherData.hourly.temperature_2m)) : '--' }}°
         </span>
         <span id="temp-min" class="text-3xl font-medium text-blue-200">
-          {{ weatherData ? Math.min(...weatherData.hourly.temperature_2m) : '--' }}°
+          {{ weatherData ? Math.round(Math.min(...weatherData.hourly.temperature_2m)) : '--' }}°
         </span>
       </div>
     </div>

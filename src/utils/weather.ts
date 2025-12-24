@@ -44,7 +44,7 @@ export function mapWmoCode(code: number, isDay: boolean = true): WeatherInfo {
     return isDay ? 'clear-day' : 'clear-night'
   }
 
-  const icon = `/weather-icons/${getIconName()}.svg`
+  const icon = `./weather-icons/${getIconName()}.svg`
 
   const textMap: Record<number, string> = {
     0: '晴朗',
