@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/teojs/clock-dashboard/compare/v1.9.0...v1.10.0) (2025-12-26)
+
+
+### Features
+
+* **clock:** implement touch and mouse interaction for toggling seconds display ([857eec5](https://github.com/teojs/clock-dashboard/commit/857eec5b5235a2062231f60175d03282b4af15e1))
+* integrate Pinia for state management and refactor weather components ([11f51a0](https://github.com/teojs/clock-dashboard/commit/11f51a0fe83fa55ddd26d01047ddaaa894d1ffe9))
+* **weather:** add snow effects to WeatherEffects component ([8d4ae65](https://github.com/teojs/clock-dashboard/commit/8d4ae65894f0c547f5df0cdc9a0ca3fb4ebce57a))
+* **weather:** enhance weather effects rendering logic in App.vue ([cf5d700](https://github.com/teojs/clock-dashboard/commit/cf5d7007f3c4bb37c7062122f500903844c41092))
+* **weather:** implement local draft management in WeatherSettingsModal ([3908241](https://github.com/teojs/clock-dashboard/commit/3908241fdbfa725f4c4ec47d268f391401f584dd))
+* **weather:** implement weather settings modal and enhance settings management ([e1c2bc3](https://github.com/teojs/clock-dashboard/commit/e1c2bc35fd11e6f88b82bdcc97dd3243858cc904))
+
 ## [1.9.0](https://github.com/teojs/clock-dashboard/compare/v1.8.0...v1.9.0) (2025-12-26)
 
 
