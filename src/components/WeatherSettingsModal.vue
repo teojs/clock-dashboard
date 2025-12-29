@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LocationMode } from '../stores/weather'
+import type { CitySearchResult, LocationMode } from '../stores/weather'
 import { RefreshCw, Save, X } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
@@ -25,6 +25,13 @@ const draft = ref({
   showSnowEffect: weatherStore.showSnowEffect,
 })
 
+const citySearchQuery = ref('')
+const citySearchResults = ref<CitySearchResult[]>([])
+const citySearchLoading = ref(false)
+const showSearchResults = ref(false)
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
+let currentSearchId = 0
+
 watch(() => props.show, (isShowing) => {
   if (isShowing) {
     draft.value = {
@@ -37,8 +44,84 @@ watch(() => props.show, (isShowing) => {
       showThunderEffect: weatherStore.showThunderEffect,
       showSnowEffect: weatherStore.showSnowEffect,
     }
+    citySearchQuery.value = draft.value.customCity || ''
+    citySearchResults.value = []
+    showSearchResults.value = false
   }
 })
+
+watch(() => draft.value.locationMode, (newMode) => {
+  if (newMode !== 'city') {
+    citySearchQuery.value = ''
+    citySearchResults.value = []
+    showSearchResults.value = false
+  }
+})
+
+async function handleCitySearch() {
+  const query = citySearchQuery.value.trim()
+
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+    searchTimeout = null
+  }
+
+  if (!query) {
+    citySearchResults.value = []
+    showSearchResults.value = false
+    citySearchLoading.value = false
+    return
+  }
+
+  currentSearchId++
+  const searchId = currentSearchId
+
+  searchTimeout = setTimeout(async () => {
+    if (searchId !== currentSearchId) {
+      return
+    }
+
+    if (citySearchQuery.value.trim() !== query) {
+      return
+    }
+
+    citySearchLoading.value = true
+    showSearchResults.value = true
+    try {
+      const results = await weatherStore.searchCities(query)
+      if (searchId === currentSearchId && citySearchQuery.value.trim() === query) {
+        citySearchResults.value = results
+      }
+    }
+    catch (e) {
+      if (searchId === currentSearchId) {
+        citySearchResults.value = []
+      }
+    }
+    finally {
+      if (searchId === currentSearchId) {
+        citySearchLoading.value = false
+      }
+    }
+  }, 500)
+}
+
+function selectCity(result: CitySearchResult) {
+  draft.value.customCity = result.name
+  citySearchQuery.value = result.name
+  citySearchResults.value = []
+  showSearchResults.value = false
+  weatherStore.$patch({
+    customLat: result.latitude,
+    customLon: result.longitude,
+  })
+}
+
+function handleSearchBlur() {
+  setTimeout(() => {
+    showSearchResults.value = false
+  }, 200)
+}
 
 function handleSaveAndClose() {
   weatherStore.$patch({
@@ -124,9 +207,49 @@ async function handleManualRefresh() {
               <a href="https://lbs.baidu.com/maptool/getpoint" target="_blank" class="text-blue-500 ml-1">https://lbs.baidu.com/maptool/getpoint</a>
             </div>
           </div>
-          <div v-if="draft.locationMode === 'city'" class="mt-4 space-y-2">
-            <label class="text-xs text-white/40 block ml-1">城市名称 (例如: 北京) - 仅支持城市</label>
-            <input v-model="draft.customCity" type="text" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-white/30">
+          <div v-if="draft.locationMode === 'city'" class="mt-4 space-y-2 relative">
+            <label class="text-xs text-white/40 block ml-1">城市名称 (例如: 北京、纽约、London、Tokyo)</label>
+            <div class="relative">
+              <input
+                v-model="citySearchQuery"
+                type="text"
+                placeholder="输入城市名称（支持中英文）"
+                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-white/30 placeholder:text-white/20"
+                @input="handleCitySearch"
+                @focus="showSearchResults = citySearchResults.length > 0"
+                @blur="handleSearchBlur"
+              >
+              <div
+                v-if="citySearchLoading"
+                class="absolute right-4 top-1/2 -translate-y-1/2"
+              >
+                <RefreshCw class="w-4 h-4 animate-spin text-white/40" />
+              </div>
+            </div>
+            <div
+              v-if="showSearchResults && citySearchResults.length > 0"
+              class="absolute z-10 w-full mt-2 bg-neutral-800 border border-white/10 rounded-xl overflow-hidden shadow-lg"
+            >
+              <div
+                v-for="(result, index) in citySearchResults"
+                :key="index"
+                class="px-4 py-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5 last:border-b-0"
+                @mousedown.prevent="selectCity(result)"
+              >
+                <div class="text-white font-medium">
+                  {{ result.name }}
+                </div>
+                <div class="text-xs text-white/50 mt-1 line-clamp-1">
+                  {{ result.displayName }}
+                </div>
+              </div>
+            </div>
+            <div
+              v-if="showSearchResults && !citySearchLoading && citySearchResults.length === 0 && citySearchQuery.trim()"
+              class="absolute z-10 w-full mt-2 bg-neutral-800 border border-white/10 rounded-xl px-4 py-3 text-white/50 text-sm"
+            >
+              未找到相关城市
+            </div>
           </div>
         </section>
 

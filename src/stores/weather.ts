@@ -5,6 +5,13 @@ import { mapWmoCode } from '../utils/weather'
 
 export type LocationMode = 'auto' | 'coords' | 'city'
 
+export interface CitySearchResult {
+  name: string
+  displayName: string
+  latitude: number
+  longitude: number
+}
+
 export const useWeatherStore = defineStore('weather', () => {
   // --- Persistent State ---
   const locationMode = ref<LocationMode>('auto')
@@ -53,22 +60,92 @@ export const useWeatherStore = defineStore('weather', () => {
     }
   }
 
+  function extractSimplifiedChinese(text: string): string {
+    if (!text) return text
+    const parts = text.split(';')
+    if (parts.length > 1) {
+      return parts[0].trim()
+    }
+    return text
+  }
+
+  function cleanDisplayName(displayName: string): string {
+    if (!displayName) return displayName
+    return displayName
+      .split(',')
+      .map(part => extractSimplifiedChinese(part))
+      .join(', ')
+  }
+
+  async function searchCities(query: string): Promise<CitySearchResult[]> {
+    try {
+      const trimmedQuery = query.trim()
+      if (!trimmedQuery) {
+        return []
+      }
+
+      const url = new URL('https://nominatim.openstreetmap.org/search')
+      url.searchParams.set('q', trimmedQuery)
+      url.searchParams.set('format', 'json')
+      url.searchParams.set('limit', '3')
+      url.searchParams.set('accept-language', 'zh-CN')
+      url.searchParams.set('addressdetails', '1')
+
+      const res = await fetch(url.toString(), {
+        headers: {
+          'User-Agent': 'ClockDashboard/1.0',
+        },
+      })
+      const data = await res.json()
+
+      if (Array.isArray(data) && data.length > 0) {
+        return data.map((r: any) => {
+          const rawName = r.name || ''
+          const rawDisplayName = r.display_name || ''
+          const cityName = extractSimplifiedChinese(rawName.split(',')[0] || rawName)
+          const displayName = cleanDisplayName(rawDisplayName)
+
+          return {
+            name: cityName || trimmedQuery,
+            displayName: displayName || cityName || trimmedQuery,
+            latitude: Number.parseFloat(r.lat),
+            longitude: Number.parseFloat(r.lon),
+          }
+        })
+      }
+      return []
+    }
+    catch (e) {
+      return []
+    }
+  }
+
   async function fetchByCity(cityName: string) {
     try {
-      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=zh&format=json`)
-      const data = await res.json()
-      if (data.results && data.results.length > 0) {
-        const { latitude, longitude, name } = data.results[0]
-        await fetchWeather(latitude, longitude, name, true)
+      const trimmedCity = cityName.trim()
+      if (!trimmedCity) {
+        throw new Error('城市名称不能为空')
+      }
+
+      const results = await searchCities(trimmedCity)
+      if (results.length > 0) {
+        const result = results[0]
+        await fetchWeather(result.latitude, result.longitude, result.name, true)
       }
       else {
         throw new Error('找不到城市')
       }
     }
     catch (e) {
-      weatherInfo.value.text = '城市错误'
+      weatherInfo.value.text = typeof e === 'object' && e !== null && 'message' in e ? (e.message as string) : '城市搜索失败'
+      weatherInfo.value.icon = mapWmoCode(-1).icon
+      locationText.value = '城市搜索失败'
       loading.value = false
     }
+  }
+
+  async function fetchByCoordinates(lat: number, lon: number, cityName: string) {
+    await fetchWeather(lat, lon, cityName, true)
   }
 
   async function reverseGeocode(lat: number, lon: number) {
@@ -170,6 +247,8 @@ export const useWeatherStore = defineStore('weather', () => {
     weatherInfo,
     // Actions
     updateWeather,
+    searchCities,
+    fetchByCoordinates,
   }
 }, {
   persist: {
