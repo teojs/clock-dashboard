@@ -3,7 +3,7 @@ import type { WeatherInfo } from '../types'
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import { searchCities as searchCitiesApi } from '../api/geocoding'
-import { getLocationByIp, reverseGeocode as reverseGeocodeApi } from '../api/location'
+import { getCurrentPosition, reverseGeocode as reverseGeocodeApi } from '../api/location'
 import { fetchWeatherData } from '../api/weather'
 import { mapWmoCode } from '../utils/weather'
 
@@ -88,31 +88,6 @@ export const useWeatherStore = defineStore('weather', () => {
     }
   }
 
-  async function fetchByCity(cityName: string) {
-    try {
-      const trimmedCity = cityName.trim()
-      if (!trimmedCity) {
-        throw new Error('城市名称不能为空')
-      }
-
-      const results = await searchCities(trimmedCity)
-      if (results.length > 0) {
-        const result = results[0]
-        locationText.value = result.name
-        await fetchWeather(result.latitude, result.longitude)
-      }
-      else {
-        throw new Error('找不到城市')
-      }
-    }
-    catch (e) {
-      weatherInfo.value.text = typeof e === 'object' && e !== null && 'message' in e ? (e.message as string) : '城市搜索失败'
-      weatherInfo.value.icon = mapWmoCode(-1).icon
-      locationText.value = '城市搜索失败'
-      loading.value = false
-    }
-  }
-
   async function reverseGeocode(lat: number, lon: number) {
     try {
       const data = await reverseGeocodeApi(lat, lon)
@@ -124,29 +99,13 @@ export const useWeatherStore = defineStore('weather', () => {
     }
   }
 
-  async function fetchByIp() {
-    try {
-      const data = await getLocationByIp()
-      if (data.latitude && data.longitude) {
-        locationText.value = data.city || data.locality || data.principalSubdivision || '未知城市'
-        await fetchWeather(data.latitude, data.longitude)
-      }
-      else {
-        throw new Error('定位失败')
-      }
-    }
-    catch (e) {
-      locationText.value = '北京市 (默认)'
-      await fetchWeather(39.9, 116.4)
-    }
-  }
-
   async function updateWeather() {
     loading.value = true
     weatherInfo.value.text = '正在获取'
     locationText.value = '定位中...'
 
     if (locationMode.value === 'coords') {
+      cachedCoords.value = null
       const city = await reverseGeocode(customLat.value, customLon.value)
       locationText.value = city
       await fetchWeather(customLat.value, customLon.value)
@@ -154,8 +113,19 @@ export const useWeatherStore = defineStore('weather', () => {
     }
 
     if (locationMode.value === 'city') {
+      cachedCoords.value = null
       locationText.value = '定位中...'
-      await fetchByCity(customCity.value)
+      const trimmedCity = customCity.value.trim()
+      if (!trimmedCity) {
+        locationText.value = '城市名称为空'
+        throw new Error('城市名称不能为空')
+      }
+      const results = await searchCities(customCity.value)
+      if (results.length > 0) {
+        const result = results[0]
+        locationText.value = result.name
+        await fetchWeather(result.latitude, result.longitude)
+      }
       return
     }
 
@@ -167,26 +137,32 @@ export const useWeatherStore = defineStore('weather', () => {
       return
     }
     try {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async (p) => {
-            const lat = p.coords.latitude
-            const lon = p.coords.longitude
-            const city = await reverseGeocode(lat, lon)
-            locationText.value = city
-            await fetchWeather(lat, lon)
-          },
-          async () => await fetchByIp(),
-          { timeout: 5000 },
-        )
+      const coords = await getCurrentPosition(5000)
+      const locationData = await reverseGeocodeApi(coords.latitude, coords.longitude)
+      const cityName = locationData.city || locationData.locality || locationData.principalSubdivision || '未知城市'
+      locationText.value = cityName
+      cachedCoords.value = {
+        lat: coords.latitude,
+        lon: coords.longitude,
+        city: cityName,
       }
-      else {
-        await fetchByIp()
-      }
+      await fetchWeather(coords.latitude, coords.longitude)
     }
-    catch (err) {
-      weatherInfo.value.text = '更新超时'
-      loading.value = false
+    catch (error) {
+      try {
+        locationText.value = '北京市 (默认)'
+        const defaultCity = '北京市 (默认)'
+        cachedCoords.value = {
+          lat: 39.9,
+          lon: 116.4,
+          city: defaultCity,
+        }
+        await fetchWeather(39.9, 116.4)
+      }
+      catch (err) {
+        weatherInfo.value.text = '更新超时'
+        loading.value = false
+      }
     }
   }
 

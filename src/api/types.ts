@@ -52,3 +52,8 @@ export interface HAServiceCallParams {
   entity_id: string
   [key: string]: any
 }
+
+export interface Coordinates {
+  latitude: number
+  longitude: number
+}
