@@ -3,6 +3,7 @@ import type { CitySearchResult, LocationMode } from '../stores/weather'
 import { RefreshCw, Save, X } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
+import packageJson from '../../package.json'
 import { useWeatherStore } from '../stores/weather'
 
 const props = defineProps<{
@@ -10,6 +11,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['close'])
+
+const VERSION = packageJson.version
 
 const weatherStore = useWeatherStore()
 const { loading } = storeToRefs(weatherStore)
@@ -322,6 +325,9 @@ async function handleManualRefresh() {
             <Save class="w-5 h-5" />
             保存并关闭
           </button>
+        </div>
+        <div class="text-center mt-4 text-xs text-white/30">
+          Clock Dashboard v{{ VERSION }} ｜ Copyright © 2025-2026 teojs
         </div>
       </div>
     </div>

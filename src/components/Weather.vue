@@ -46,7 +46,7 @@ onUnmounted(() => {
         <p id="weather-text" class="text-4xl font-semibold tracking-wide">
           {{ weatherInfo.text }}
         </p>
-        <p id="location-text" class="text-md text-white/60 uppercase tracking-widest mt-1 whitespace-nowrap">
+        <p id="location-text" class="text-lg text-white/60 uppercase tracking-widest mt-1 whitespace-nowrap">
           {{ locationText }} ·
           降雨 <span class="text-blue-400 text-xl tabular-nums">{{ weatherData ? weatherData.hourly.precipitation_probability[weatherData.current_hour_index] : '--' }}%</span>
         </p>
