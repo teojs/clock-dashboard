@@ -11,6 +11,9 @@
 
 预览地址：[https://teojs.github.io/clock-dashboard/](https://teojs.github.io/clock-dashboard/)
 
+![时钟页面](./docs/4.gif)
+
+
 ---
 
 ## 更新日志
