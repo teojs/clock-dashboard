@@ -290,4 +290,12 @@ http:
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=teojs/clock-dashboard&type=date&legend=bottom-right)](https://www.star-history.com/#teojs/clock-dashboard&type=date&legend=bottom-right)
+## Star History
+
+<a href="https://www.star-history.com/?repos=teojs%2Fclock-dashboard&type=date&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=teojs/clock-dashboard&type=date&theme=dark&legend=bottom-right&sealed_token=SYYzRWGUm9y6eIXGtSkCIpST397ERels1B44YRWFZ1peNRifMB_Ua5VOZwHuH7srWZzR8QqeRbBo0p4jR_icK2jthf5CQ5fkpoQpcNWXZrrdgxkBc0qvPg" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=teojs/clock-dashboard&type=date&legend=bottom-right&sealed_token=SYYzRWGUm9y6eIXGtSkCIpST397ERels1B44YRWFZ1peNRifMB_Ua5VOZwHuH7srWZzR8QqeRbBo0p4jR_icK2jthf5CQ5fkpoQpcNWXZrrdgxkBc0qvPg" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=teojs/clock-dashboard&type=date&legend=bottom-right&sealed_token=SYYzRWGUm9y6eIXGtSkCIpST397ERels1B44YRWFZ1peNRifMB_Ua5VOZwHuH7srWZzR8QqeRbBo0p4jR_icK2jthf5CQ5fkpoQpcNWXZrrdgxkBc0qvPg" />
+ </picture>
+</a>
