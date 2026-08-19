@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.21.0](https://github.com/teojs/clock-dashboard/compare/v1.20.4...v1.21.0) (2026-08-19)
+
+
+### Features
+
+* add compact clock mode with adjustable settings and new font integration ([048d20e](https://github.com/teojs/clock-dashboard/commit/048d20e74107bc658d80753fdebc33faa35660c9))
+* add QWeather support for enhanced weather data and air quality ([dbc3322](https://github.com/teojs/clock-dashboard/commit/dbc33223bcf0807eecdb070b30f5b7acc9c98629))
+
 ### [1.20.4](https://github.com/teojs/clock-dashboard/compare/v1.20.3...v1.20.4) (2026-06-05)
 
 
