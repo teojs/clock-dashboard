@@ -100,7 +100,16 @@
     "airQuality": "空气质量（美国 AQI）",
     "feelsLike": "体感温度",
     "uv": "紫外线指数",
-    "refreshNow": "立即刷新天气"
+    "refreshNow": "立即刷新天气",
+    "dataSource": "数据来源",
+    "openMeteo": "Open-Meteo",
+    "qweather": "和风天气",
+    "qweatherKey": "API Key",
+    "qweatherKeyPlaceholder": "在和风天气控制台获取",
+    "qweatherHost": "API Host（可选）",
+    "qweatherHostPlaceholder": "控制台中的 API Host，可留空",
+    "qweatherHint": "开发者控制台：",
+    "airQualityQweather": "空气质量（中国 AQI）"
   },
   "smartHomeSettings": {
     "baseConfig": "基础配置",
@@ -146,6 +155,7 @@
       "loading": "正在获取",
       "locating": "定位中...",
       "apiError": "接口错误",
+      "missingKey": "请填写和风天气 Key",
       "updateTimeout": "更新超时",
       "cityEmpty": "城市名称为空",
       "unknownCity": "未知城市",

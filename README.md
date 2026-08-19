@@ -42,7 +42,7 @@
 ## 📸 紧凑时钟预览
 
 |                紧凑时钟页面                 |
-| :-------------------------------------: |
+| :-----------------------------------------: |
 | ![紧凑时钟页面](./public/screenshots/7.png) |
 
 ---
@@ -56,9 +56,9 @@
   - 支持 12 小时制
 
 - **🌤️ 实时天气**
-  - 天气数据来自 [Open-Meteo](https://open-meteo.com/)
+  - 天气数据支持 [Open-Meteo](https://open-meteo.com/) 与 [和风天气](https://dev.qweather.com/)
   - 根据地理位置或通过 [BigDataCloud](https://www.bigdatacloud.com/) 查询 IP 获取位置
-  - 显示温度、湿度、[空气指数（US AQI）](https://open-meteo.com/en/docs/air-quality-api)、体感温度、紫外线指数
+  - 显示温度、湿度、空气指数（Open-Meteo 为 [US AQI](https://open-meteo.com/en/docs/air-quality-api)，和风天气为中国 AQI）、体感温度、紫外线指数
   - 支持天气刷新间隔设置
   - 支持下雨、下雪、打雷特效开关
   - 点击底部天气区域可进行设置
@@ -242,6 +242,7 @@ http:
 - ✨ 新增紧凑时钟模式，适合手机端小屏显示
 - ✨ 支持开关显示农历和节假日
 - ✨ 支持数字时钟的间距调节
+- ✨ 新增和风天气支持，支持中国 AQI
 
 ### v1.20.0 (2026-01-21)
 

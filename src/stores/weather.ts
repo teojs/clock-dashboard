@@ -4,12 +4,14 @@ import { defineStore, storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
 import { searchCities as searchCitiesApi } from '../api/geocoding'
 import { getCurrentPosition, reverseGeocode as reverseGeocodeApi } from '../api/location'
+import { fetchQweatherAirQualityData, fetchQweatherWeatherData } from '../api/qweather'
 import { fetchAirQualityData, fetchWeatherData } from '../api/weather'
 import { i18n } from '../i18n'
 import { mapWmoCode } from '../utils/weather'
 import { useConfigStore } from './config'
 
 export type LocationMode = 'auto' | 'coords' | 'city'
+export type WeatherDataSource = 'open-meteo' | 'qweather'
 
 export const useWeatherStore = defineStore('weather', () => {
   const configStore = useConfigStore()
@@ -24,6 +26,9 @@ export const useWeatherStore = defineStore('weather', () => {
   const showRainEffect = ref(true)
   const showThunderEffect = ref(true)
   const showSnowEffect = ref(true)
+  const dataSource = ref<WeatherDataSource>('open-meteo')
+  const qweatherKey = ref('')
+  const qweatherHost = ref('')
 
   // --- Runtime State ---
   const weatherData = ref<any>(null)
@@ -35,7 +40,24 @@ export const useWeatherStore = defineStore('weather', () => {
 
   async function fetchWeather(lat: number, lon: number) {
     try {
-      const weatherPromise = fetchWeatherData(lat, lon)
+      const useQweather = dataSource.value === 'qweather'
+      const qweatherOptions = {
+        key: qweatherKey.value.trim(),
+        host: qweatherHost.value.trim(),
+        lang: language.value,
+      }
+
+      if (useQweather && !qweatherOptions.key) {
+        weatherData.value = null
+        airQualityData.value = null
+        weatherInfo.value.text = i18n.global.t('weather.status.missingKey')
+        weatherInfo.value.icon = mapWmoCode(-1).icon
+        return
+      }
+
+      const weatherPromise = (useQweather
+        ? fetchQweatherWeatherData(lat, lon, qweatherOptions)
+        : fetchWeatherData(lat, lon))
         .then((wData) => {
           weatherData.value = wData
           weatherInfo.value = mapWmoCode(wData.current.weather_code, wData.current.is_day === 1)
@@ -46,7 +68,9 @@ export const useWeatherStore = defineStore('weather', () => {
           weatherInfo.value.icon = mapWmoCode(-1).icon
         })
 
-      const aqiPromise = fetchAirQualityData(lat, lon)
+      const aqiPromise = (useQweather
+        ? fetchQweatherAirQualityData(lat, lon, qweatherOptions)
+        : fetchAirQualityData(lat, lon))
         .then((aData) => {
           airQualityData.value = aData
         })
@@ -237,6 +261,9 @@ export const useWeatherStore = defineStore('weather', () => {
     showRainEffect,
     showThunderEffect,
     showSnowEffect,
+    dataSource,
+    qweatherKey,
+    qweatherHost,
     // Runtime
     weatherData,
     loading,
@@ -259,6 +286,9 @@ export const useWeatherStore = defineStore('weather', () => {
       'showRainEffect',
       'showThunderEffect',
       'showSnowEffect',
+      'dataSource',
+      'qweatherKey',
+      'qweatherHost',
     ],
   },
 })

@@ -57,6 +57,38 @@ export function mapWmoCode(code: number, isDay: boolean = true): WeatherInfo {
   }
 }
 
+/** 将和风天气 icon 代码映射为 WMO 天气代码，便于复用现有图标与特效逻辑 */
+export function mapQweatherIconToWmo(icon: string | number): number {
+  const code = Number(icon)
+  if (Number.isNaN(code)) return -1
+
+  if (code === 100 || code === 150) return 0
+  if (code === 102 || code === 152) return 1
+  if (code === 101 || code === 103 || code === 151 || code === 153) return 2
+  if (code === 104 || code === 154) return 3
+
+  if (code === 309) return 51
+  if (code === 300 || code === 350) return 80
+  if (code === 301 || code === 351) return 82
+  if (code === 302 || code === 303) return 95
+  if (code === 304) return 96
+  if (code === 305 || code === 314 || code === 399) return 61
+  if (code === 306 || code === 315) return 63
+  if (code === 313) return 66
+  if (code === 307 || code === 308 || (code >= 310 && code <= 312) || (code >= 316 && code <= 318)) return 65
+
+  if (code === 400 || code === 408 || code === 499) return 71
+  if (code === 401 || code === 409) return 73
+  if (code === 402 || code === 403 || code === 410) return 75
+  if (code === 404 || code === 405 || code === 406 || code === 456) return 66
+  if (code === 407 || code === 457) return 85
+
+  if (code >= 500 && code <= 515) return 45
+
+  if (code === 900 || code === 901) return 0
+  return -1
+}
+
 export function getAqiInfo(aqi: number | undefined) {
   const { t } = i18n.global
   if (aqi === undefined) return { label: '--', color: 'text-white/40' }

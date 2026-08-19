@@ -36,7 +36,10 @@ interface ForecastDay {
 const forecastDays = computed<ForecastDay[]>(() => {
   if (!weatherData.value?.daily?.time?.length) return []
 
-  const { daily } = weatherData.value
+  const { daily, current, hourly, current_hour_index } = weatherData.value
+  const hourIndex = current_hour_index ?? new Date().getHours()
+  const currentTemp = current?.temperature_2m
+
   return daily.time
     .slice(0, 5)
     .map((time: string, index: number) => {
@@ -51,15 +54,29 @@ const forecastDays = computed<ForecastDay[]>(() => {
           : t(`weekdays.short.${date.getDay()}`)
 
       const dateText = new Intl.DateTimeFormat(locale.value, { month: 'numeric', day: 'numeric' }).format(date)
-      const weatherInfo = mapWmoCode(daily.weather_code[index], true)
+      const weatherInfo = isToday && current
+        ? mapWmoCode(current.weather_code, current.is_day === 1)
+        : mapWmoCode(daily.weather_code[index], true)
+
+      let tempMax = Math.round(daily.temperature_2m_max[index])
+      let tempMin = Math.round(daily.temperature_2m_min[index])
+      if (isToday && currentTemp !== undefined) {
+        const roundedCurrent = Math.round(currentTemp)
+        tempMax = Math.max(tempMax, roundedCurrent)
+        tempMin = Math.min(tempMin, roundedCurrent)
+      }
+
+      const precipitationProbability = isToday
+        ? (hourly?.precipitation_probability?.[hourIndex] ?? daily.precipitation_probability_max[index] ?? 0)
+        : (daily.precipitation_probability_max[index] || 0)
 
       return {
         dayName,
         dateText,
         weatherInfo,
-        tempMax: Math.round(daily.temperature_2m_max[index]),
-        tempMin: Math.round(daily.temperature_2m_min[index]),
-        precipitationProbability: daily.precipitation_probability_max[index] || 0,
+        tempMax,
+        tempMin,
+        precipitationProbability,
         isToday,
       }
     })

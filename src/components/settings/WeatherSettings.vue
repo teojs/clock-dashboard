@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CitySearchResult } from '../../api/types'
-import type { LocationMode } from '../../stores/weather'
+import type { LocationMode, WeatherDataSource } from '../../stores/weather'
 import {
   Droplets,
   Leaf,
@@ -26,6 +26,9 @@ const weatherDraft = ref({
   showRainEffect: weatherStore.showRainEffect,
   showThunderEffect: weatherStore.showThunderEffect,
   showSnowEffect: weatherStore.showSnowEffect,
+  dataSource: weatherStore.dataSource,
+  qweatherKey: weatherStore.qweatherKey,
+  qweatherHost: weatherStore.qweatherHost,
 })
 
 const citySearchQuery = ref('')
@@ -81,6 +84,9 @@ async function handleManualRefresh() {
     customLat: weatherDraft.value.customLat,
     customLon: weatherDraft.value.customLon,
     customCity: weatherDraft.value.customCity,
+    dataSource: weatherDraft.value.dataSource,
+    qweatherKey: weatherDraft.value.qweatherKey,
+    qweatherHost: weatherDraft.value.qweatherHost,
   })
   await weatherStore.updateWeather()
 }
@@ -101,6 +107,9 @@ function save() {
     showRainEffect: weatherDraft.value.showRainEffect,
     showThunderEffect: weatherDraft.value.showThunderEffect,
     showSnowEffect: weatherDraft.value.showSnowEffect,
+    dataSource: weatherDraft.value.dataSource,
+    qweatherKey: weatherDraft.value.qweatherKey,
+    qweatherHost: weatherDraft.value.qweatherHost,
   })
   weatherStore.updateWeather()
 }
@@ -115,6 +124,9 @@ function reset() {
     showRainEffect: weatherStore.showRainEffect,
     showThunderEffect: weatherStore.showThunderEffect,
     showSnowEffect: weatherStore.showSnowEffect,
+    dataSource: weatherStore.dataSource,
+    qweatherKey: weatherStore.qweatherKey,
+    qweatherHost: weatherStore.qweatherHost,
   }
   citySearchQuery.value = weatherDraft.value.customCity || ''
 }
@@ -124,6 +136,50 @@ defineExpose({ save, reset })
 
 <template>
   <div class="space-y-10 animate-fade-in">
+    <section>
+      <h4 class="text-white/60 mb-4 uppercase tracking-widest text-sm font-medium">
+        {{ t('weatherSettings.dataSource') }}
+      </h4>
+      <div class="flex flex-wrap space-x-3">
+        <button
+          v-for="source in (['open-meteo', 'qweather'] as WeatherDataSource[])"
+          :key="source"
+          class="settings-tab-btn flex-1 whitespace-nowrap"
+          :class="{ active: weatherDraft.dataSource === source }"
+          @click="weatherDraft.dataSource = source"
+        >
+          {{ source === 'open-meteo' ? t('weatherSettings.openMeteo') : t('weatherSettings.qweather') }}
+        </button>
+      </div>
+
+      <div v-if="weatherDraft.dataSource === 'qweather'" class="mt-4 space-y-4">
+        <div class="space-y-2">
+          <label class="text-xs text-white/40 block ml-1">{{ t('weatherSettings.qweatherKey') }}</label>
+          <input
+            v-model="weatherDraft.qweatherKey"
+            type="password"
+            autocomplete="off"
+            :placeholder="t('weatherSettings.qweatherKeyPlaceholder')"
+            class="settings-input placeholder:text-white/20"
+          >
+        </div>
+        <div class="space-y-2">
+          <label class="text-xs text-white/40 block ml-1">{{ t('weatherSettings.qweatherHost') }}</label>
+          <input
+            v-model="weatherDraft.qweatherHost"
+            type="text"
+            autocomplete="off"
+            :placeholder="t('weatherSettings.qweatherHostPlaceholder')"
+            class="settings-input placeholder:text-white/20"
+          >
+        </div>
+        <p class="text-xs text-white/40 ml-1">
+          {{ t('weatherSettings.qweatherHint') }}
+          <a href="https://dev.qweather.com/" target="_blank" class="text-blue-500">https://dev.qweather.com/</a>
+        </p>
+      </div>
+    </section>
+
     <section>
       <h4 class="text-white/60 mb-4 uppercase tracking-widest text-sm font-medium">
         {{ t('weatherSettings.locationMode') }}
@@ -257,7 +313,7 @@ defineExpose({ save, reset })
         </div>
         <div class="flex items-center space-x-3 flex-1 whitespace-nowrap p-2">
           <Leaf class="w-5 h-5 text-green-300/60 flex-shrink-0" />
-          <span class="text-sm text-white/80">{{ t('weatherSettings.airQuality') }}</span>
+          <span class="text-sm text-white/80">{{ weatherDraft.dataSource === 'qweather' ? t('weatherSettings.airQualityQweather') : t('weatherSettings.airQuality') }}</span>
         </div>
         <div class="flex items-center space-x-3 flex-1 whitespace-nowrap p-2">
           <PersonStanding class="w-5 h-5 text-orange-500/60 flex-shrink-0" />

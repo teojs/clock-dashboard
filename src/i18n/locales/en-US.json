@@ -100,7 +100,16 @@
     "airQuality": "Air Quality (US AQI)",
     "feelsLike": "Feels Like",
     "uv": "UV Index",
-    "refreshNow": "Refresh Weather Now"
+    "refreshNow": "Refresh Weather Now",
+    "dataSource": "Data Source",
+    "openMeteo": "Open-Meteo",
+    "qweather": "QWeather",
+    "qweatherKey": "API Key",
+    "qweatherKeyPlaceholder": "Get it from the QWeather console",
+    "qweatherHost": "API Host (optional)",
+    "qweatherHostPlaceholder": "API Host from console, can be empty",
+    "qweatherHint": "Developer console: ",
+    "airQualityQweather": "Air Quality (China AQI)"
   },
   "smartHomeSettings": {
     "baseConfig": "Basic Config",
@@ -146,6 +155,7 @@
       "loading": "Fetching",
       "locating": "Locating...",
       "apiError": "API Error",
+      "missingKey": "Please enter QWeather API Key",
       "updateTimeout": "Update Timeout",
       "cityEmpty": "City name is empty",
       "unknownCity": "Unknown City",
