@@ -41,7 +41,8 @@ const yearMonthLabel = computed(() => {
   return formatter.format(date)
 })
 
-const showLunar = computed(() => locale.value !== 'en-US')
+const showLunar = computed(() => locale.value !== 'en-US' && layoutConfig.value.showLunar)
+const showFestival = computed(() => locale.value !== 'en-US' && layoutConfig.value.showFestival)
 
 const baseDelay = computed(() => {
   return clockConfig.value.showSeconds ? 0 : -2
@@ -83,11 +84,14 @@ watch(idle, (newIdle) => {
             {{ yearMonthLabel }}
           </span>
         </div>
-        <div v-if="showLunar" class="flex flex-col">
-          <div class="lunar-date-label">
-            {{ lunar.date }}<span v-if="lunar.festival">·{{ lunar.festival }}</span>
+        <div v-if="showLunar || (showFestival && lunar.festival)" class="flex flex-col">
+          <div v-if="showLunar" class="lunar-date-label">
+            {{ lunar.date }}<span v-if="showFestival && lunar.festival">·{{ lunar.festival }}</span>
           </div>
-          <span class="lunar-year-label">{{ lunar.year }}({{ lunar.yearShengxiao }})年{{ lunar.month }}月</span>
+          <div v-else class="lunar-date-label">
+            {{ lunar.festival }}
+          </div>
+          <span v-if="showLunar" class="lunar-year-label">{{ lunar.year }}({{ lunar.yearShengxiao }})年{{ lunar.month }}月</span>
         </div>
       </div>
     </div>
@@ -96,7 +100,12 @@ watch(idle, (newIdle) => {
     <div
       class="clock-display tabular-nums cursor-pointer transition-all duration-500"
       :class="{ 'with-seconds': clockConfig.showSeconds }"
-      :style="{ color: clockConfig.color, fontWeight: clockConfig.fontWeight, opacity: clockConfig.opacity }"
+      :style="{
+        'color': clockConfig.color,
+        'fontWeight': clockConfig.fontWeight,
+        'opacity': clockConfig.opacity,
+        '--digit-spacing': `${clockConfig.digitSpacing ?? -0.18}em`,
+      }"
       @click.stop.prevent="toggleSeconds"
     >
       <Digit

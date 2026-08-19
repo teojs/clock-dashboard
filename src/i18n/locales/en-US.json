@@ -57,11 +57,17 @@
   },
   "generalSettings": {
     "layout": "Layout",
-    "clockOnlyMode": "Clock Only"
+    "clockOnlyMode": "Clock Only",
+    "compactMode": "Compact Mode",
+    "showLunar": "Show Lunar Calendar",
+    "showFestival": "Show Festivals"
   },
   "clockSettings": {
     "color": "Clock Color",
     "fontWeight": "Weight",
+    "digitSpacing": "Digit Spacing",
+    "digitSpacingSmall": "Small",
+    "digitSpacingLarge": "Large",
     "opacity": "Opacity",
     "showSeconds": "Show Seconds",
     "twentyFourHour": "24-hour",

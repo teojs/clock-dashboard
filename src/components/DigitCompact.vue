@@ -63,23 +63,20 @@ onMounted(() => {
 
 <style scoped>
 .digit-container {
-  --digit-item-height: 0.8em;
+  --digit-item-height: 100vh;
   position: relative;
   display: inline-block;
   height: var(--digit-item-height);
-  width: 0.8em;
-  overflow: hidden;
-  margin: 0 var(--digit-spacing, -0.18em);
   vertical-align: middle;
   transition: transform 0.6s linear;
   mix-blend-mode: screen;
   z-index: 1;
+  text-align: center;
 }
 
 .digit-window {
   display: flex;
   flex-direction: column;
-  width: 100%;
   transform: translateY(0);
 }
 
@@ -97,5 +94,6 @@ onMounted(() => {
   line-height: var(--digit-item-height);
   text-align: center;
   flex-shrink: 0;
+  transform: translateY(4vh);
 }
 </style>

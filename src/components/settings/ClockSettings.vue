@@ -8,7 +8,10 @@ const configStore = useConfigStore()
 const { clockConfig } = storeToRefs(configStore)
 const { t } = useI18n()
 
-const clockDraft = ref({ ...clockConfig.value })
+const clockDraft = ref({
+  ...clockConfig.value,
+  digitSpacing: clockConfig.value.digitSpacing ?? -0.18,
+})
 const presetColors = ['#ffffff', '#659FE8', '#EF7993', '#F2A666', '#8CDB92', '#68CDD7']
 
 function save() {
@@ -72,6 +75,24 @@ defineExpose({ save, reset })
         <span>0.1</span>
         <span>0.5</span>
         <span>1.0</span>
+      </div>
+    </section>
+
+    <section>
+      <h4 class="text-white/60 uppercase tracking-widest text-sm font-medium mb-6">
+        {{ t('clockSettings.digitSpacing') }}
+      </h4>
+      <input
+        v-model.number="clockDraft.digitSpacing"
+        type="range"
+        min="-0.18"
+        max="-0.08"
+        step="0.01"
+        class="settings-range"
+      >
+      <div class="flex justify-between mt-3 text-[10px] text-white/40 font-mono">
+        <span>{{ t('clockSettings.digitSpacingSmall') }}</span>
+        <span>{{ t('clockSettings.digitSpacingLarge') }}</span>
       </div>
     </section>
 

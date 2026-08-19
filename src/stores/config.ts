@@ -33,6 +33,8 @@ export const useConfigStore = defineStore('config', () => {
     opacity: 0.9,
     /** 24小时制 */
     is24Hour: true,
+    /** 数字水平间距（em，负值表示重叠） */
+    digitSpacing: -0.18,
   })
 
   const calendarConfig = ref({
@@ -45,6 +47,12 @@ export const useConfigStore = defineStore('config', () => {
   const layoutConfig = ref({
     /** 仅显示时钟 */
     clockOnlyMode: false,
+    /** 紧凑模式：时钟在左，日历与天气在右 */
+    compactMode: false,
+    /** 显示农历 */
+    showLunar: true,
+    /** 显示节假日 */
+    showFestival: true,
   })
 
   return {

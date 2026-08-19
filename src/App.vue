@@ -11,6 +11,7 @@ import { useWeatherStore } from './stores/weather'
 import { isIpadIOS15OrLower } from './utils/device'
 import CalendarView from './views/CalendarView.vue'
 import ClockWeatherView from './views/ClockWeatherView.vue'
+import ClockWeatherViewCompact from './views/ClockWeatherViewCompact.vue'
 import SmartHomeView from './views/SmartHomeView.vue'
 
 const configStore = useConfigStore()
@@ -156,7 +157,8 @@ watch(language, (nextLocale) => {
         <SmartHomeView v-if="currentPage === 0" />
       </div>
       <div class="slide-page w-screen h-screen flex items-center justify-center flex-shrink-0">
-        <ClockWeatherView />
+        <ClockWeatherViewCompact v-if="layoutConfig.compactMode" />
+        <ClockWeatherView v-else />
       </div>
       <div class="slide-page w-screen h-screen flex items-center justify-center flex-shrink-0">
         <CalendarView v-if="currentPage === 2" ref="calendarRef" />

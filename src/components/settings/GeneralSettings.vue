@@ -8,7 +8,24 @@ const configStore = useConfigStore()
 const { language, layoutConfig } = storeToRefs(configStore)
 const { t } = useI18n()
 
-const layoutDraft = ref({ ...layoutConfig.value })
+const layoutDraft = ref({
+  ...layoutConfig.value,
+  compactMode: layoutConfig.value.compactMode ?? false,
+  showLunar: layoutConfig.value.showLunar ?? true,
+  showFestival: layoutConfig.value.showFestival ?? true,
+})
+
+function toggleClockOnlyMode() {
+  layoutDraft.value.clockOnlyMode = !layoutDraft.value.clockOnlyMode
+  if (layoutDraft.value.clockOnlyMode)
+    layoutDraft.value.compactMode = false
+}
+
+function toggleCompactMode() {
+  layoutDraft.value.compactMode = !layoutDraft.value.compactMode
+  if (layoutDraft.value.compactMode)
+    layoutDraft.value.clockOnlyMode = false
+}
 
 function save() {
   layoutConfig.value = { ...layoutDraft.value }
@@ -59,9 +76,39 @@ defineExpose({ save, reset })
       <div
         class="settings-toggle-card"
         :class="{ active: layoutDraft.clockOnlyMode }"
-        @click="layoutDraft.clockOnlyMode = !layoutDraft.clockOnlyMode"
+        @click="toggleClockOnlyMode"
       >
         <span class="font-medium">{{ t('generalSettings.clockOnlyMode') }}</span>
+        <div class="toggle-switch">
+          <div class="toggle-dot" />
+        </div>
+      </div>
+      <div
+        class="settings-toggle-card"
+        :class="{ active: layoutDraft.compactMode }"
+        @click="toggleCompactMode"
+      >
+        <span class="font-medium">{{ t('generalSettings.compactMode') }}</span>
+        <div class="toggle-switch">
+          <div class="toggle-dot" />
+        </div>
+      </div>
+      <div
+        class="settings-toggle-card"
+        :class="{ active: layoutDraft.showLunar }"
+        @click="layoutDraft.showLunar = !layoutDraft.showLunar"
+      >
+        <span class="font-medium">{{ t('generalSettings.showLunar') }}</span>
+        <div class="toggle-switch">
+          <div class="toggle-dot" />
+        </div>
+      </div>
+      <div
+        class="settings-toggle-card"
+        :class="{ active: layoutDraft.showFestival }"
+        @click="layoutDraft.showFestival = !layoutDraft.showFestival"
+      >
+        <span class="font-medium">{{ t('generalSettings.showFestival') }}</span>
         <div class="toggle-switch">
           <div class="toggle-dot" />
         </div>

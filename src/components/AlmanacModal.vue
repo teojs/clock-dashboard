@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { LunarInfo } from '../types'
 import { X } from 'lucide-vue-next'
+import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useConfigStore } from '../stores/config'
 
 const props = defineProps<{
   show: boolean
@@ -13,6 +15,7 @@ const props = defineProps<{
 defineEmits(['close'])
 
 const { locale, t } = useI18n()
+const { layoutConfig } = storeToRefs(useConfigStore())
 
 const weekdayLabel = computed(() => {
   const formatter = new Intl.DateTimeFormat(locale.value, { weekday: 'long' })
@@ -24,7 +27,8 @@ const dateLabel = computed(() => {
   return formatter.format(props.date)
 })
 
-const showLunar = computed(() => locale.value !== 'en-US')
+const showLunar = computed(() => locale.value !== 'en-US' && layoutConfig.value.showLunar)
+const showFestival = computed(() => locale.value !== 'en-US' && layoutConfig.value.showFestival)
 </script>
 
 <template>
@@ -60,7 +64,7 @@ const showLunar = computed(() => locale.value !== 'en-US')
             <span>
               {{ lunar.year }}({{ lunar.yearShengxiao }})年 {{ lunar.month }}({{ lunar.monthGanzhi }})月 {{ lunar.date }}({{ lunar.dayGanzhi }})日
             </span>
-            <span v-if="lunar.festival" class="text-blue-400">
+            <span v-if="showFestival && lunar.festival" class="text-blue-400">
               · {{ lunar.festival }}
             </span>
             <span v-if="lunar.holiday" :class="lunar.holiday === '休' ? 'text-red-400' : 'text-orange-400'">

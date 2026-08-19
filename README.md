@@ -39,13 +39,19 @@
 | :-------------------------------------: | :---------------------------------------: |
 | ![时钟页面](./public/screenshots/6.png) | ![仅显示时钟](./public/screenshots/5.png) |
 
+## 📸 紧凑时钟预览
+
+|                紧凑时钟页面                 |
+| :-------------------------------------: |
+| ![紧凑时钟页面](./public/screenshots/7.png) |
+
 ---
 
 ## 🌟 特性
 
 - **🕐 动态数字时钟**
   - 滚动动画和随机倾斜效果
-  - 使用 [SF Compact Rounded](https://developer.apple.com/fonts/) 字体
+  - 使用 [SF Compact Rounded](https://developer.apple.com/fonts/)、[Roboto Flex](https://fonts.google.com/specimen/Roboto+Flex) 字体
   - 支持自定义时钟颜色
   - 支持 12 小时制
 
@@ -230,6 +236,12 @@ http:
 ---
 
 ## 📝 更新日志
+
+### v1.21.0 (2026-08-19)
+
+- ✨ 新增紧凑时钟模式，适合手机端小屏显示
+- ✨ 支持开关显示农历和节假日
+- ✨ 支持数字时钟的间距调节
 
 ### v1.20.0 (2026-01-21)
 

@@ -57,11 +57,17 @@
   },
   "generalSettings": {
     "layout": "界面佈局",
-    "clockOnlyMode": "僅顯示時鐘"
+    "clockOnlyMode": "僅顯示時鐘",
+    "compactMode": "緊湊模式",
+    "showLunar": "顯示農曆",
+    "showFestival": "顯示節假日"
   },
   "clockSettings": {
     "color": "時鐘顏色",
     "fontWeight": "字重",
+    "digitSpacing": "數字間距",
+    "digitSpacingSmall": "小",
+    "digitSpacingLarge": "大",
     "opacity": "透明度",
     "showSeconds": "顯示秒鐘",
     "twentyFourHour": "24 小時制",
