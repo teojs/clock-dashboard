@@ -1,7 +1,7 @@
 {
   "name": "clock-dashboard",
   "type": "module",
-  "version": "1.21.0",
+  "version": "1.21.1",
   "private": false,
   "packageManager": "pnpm@9.6.0",
   "license": "CC-BY-NC-SA-4.0",
