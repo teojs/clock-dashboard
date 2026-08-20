@@ -46,7 +46,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="weather-clickable flex flex-col items-center w-full transition-opacity duration-700 gap-[3vh]"
+    class="weather-clickable flex flex-col items-center w-full transition-opacity duration-700 space-y-[3vh]"
     :class="{ 'opacity-30': loading, 'opacity-100': !loading, compact }"
     @click.stop.prevent="openForecast"
   >
@@ -70,8 +70,8 @@ onUnmounted(() => {
     </div>
 
     <!-- 温度显示 -->
-    <div class="flex items-baseline justify-center gap-[4vw]">
-      <div class="flex items-center gap-[1vh]">
+    <div class="flex items-baseline justify-center space-x-[4vw]">
+      <div class="flex items-center space-x-[1vh]">
         <div class="text-[10vh] leading-none font-extralight">
           {{ weatherData ? Math.round(weatherData.current.temperature_2m) : '--' }}
         </div>
@@ -83,7 +83,7 @@ onUnmounted(() => {
         </div>
       </div>
       <!-- 湿度 -->
-      <div class="flex items-center gap-[1vh]">
+      <div class="flex items-center space-x-[1vh]">
         <div class="text-[10vh] leading-none font-extralight">
           {{ weatherData ? weatherData.current.relative_humidity_2m : '--' }}
         </div>

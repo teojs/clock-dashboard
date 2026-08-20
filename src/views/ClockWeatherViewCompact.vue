@@ -105,12 +105,12 @@ watch(idle, (newIdle) => {
         </div>
       </div>
 
-      <div class="flex h-full flex-col items-center justify-center min-w-0 gap-[4vh] py-[2vh]">
-        <div class="flex flex-col items-center justify-center gap-[3vh]">
+      <div class="flex h-full flex-col items-center justify-center min-w-0 space-y-[4vh] py-[2vh]">
+        <div class="flex flex-col items-center justify-center space-y-[3vh]">
           <div class="text-[26vh] leading-none">
             {{ now.getDate() }}
           </div>
-          <div class="flex gap-[1vw]">
+          <div class="flex space-x-[1vw]">
             <span class="text-[8vh] leading-none">
               {{ monthLabel }}
             </span>
@@ -154,7 +154,6 @@ watch(idle, (newIdle) => {
   align-items: center;
   justify-content: center;
   font-family: 'Roboto Flex Variable', 'SFCompactRounded', 'Huninn', sans-serif;
-  font-size: min(58vw, 100vh);
   font-weight: 500;
   font-style: normal;
   font-stretch: 25%;
@@ -172,10 +171,21 @@ watch(idle, (newIdle) => {
   font-optical-sizing: auto;
 }
 
+.clock-display,
+.clock-separator {
+  font-size: 58vw;
+}
+
+@media (min-aspect-ratio: 100 / 58) {
+  .clock-display,
+  .clock-separator {
+    font-size: 100vh;
+  }
+}
+
 .clock-separator {
   height: 100vh;
   line-height: 100vh;
-  font-size: min(58vw, 100vh);
   opacity: 0.98;
   text-align: center;
   display: flex;
