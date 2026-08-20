@@ -1,5 +1,12 @@
 @import '@fontsource/huninn';
-@import '@fontsource-variable/roboto-flex/full.css';
+
+@font-face {
+  font-family: 'ClockDigits';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ClockDigits/ClockDigits.woff2') format('woff2');
+}
 
 @font-face {
   font-family: 'SFCompactRounded';

@@ -149,26 +149,13 @@ watch(idle, (newIdle) => {
 
 .clock-display {
   display: flex;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
-  font-family: 'Roboto Flex Variable', 'SFCompactRounded', 'Huninn', sans-serif;
+  font-family: 'ClockDigits', 'SFCompactRounded', 'Huninn', sans-serif;
   font-weight: 500;
   font-style: normal;
-  font-stretch: 25%;
-  font-variation-settings:
-    'slnt' 0,
-    'GRAD' 0,
-    'XOPQ' 96,
-    'XTRA' 468,
-    'YOPQ' 79,
-    'YTAS' 750,
-    'YTDE' -203,
-    'YTFI' 788,
-    'YTLC' 514,
-    'YTUC' 712;
-  font-optical-sizing: auto;
 }
 
 .clock-display,

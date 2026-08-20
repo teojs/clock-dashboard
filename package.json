@@ -17,7 +17,6 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@fontsource-variable/roboto-flex": "^5.3.0",
     "@fontsource/huninn": "^5.0.0",
     "@vueuse/core": "^14.1.0",
     "clsx": "^2.1.0",
