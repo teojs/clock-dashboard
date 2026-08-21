@@ -90,12 +90,8 @@ async function qweatherGet<T extends { code: string }>(
   url.searchParams.set('key', options.key)
   url.searchParams.set('lang', toQweatherLang(options.lang))
 
-  const response = await fetch(url.toString(), {
-    headers: {
-      'X-QW-Api-Key': options.key,
-      'Accept': 'application/json',
-    },
-  })
+  // 不设置自定义请求头，避免触发 CORS 预检（iOS 12 等旧 WebKit 会因此失败）
+  const response = await fetch(url.toString())
   if (!response.ok) {
     throw new Error(`QWeather API error: ${response.statusText}`)
   }
