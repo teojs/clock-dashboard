@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.21.5](https://github.com/teojs/clock-dashboard/compare/v1.21.4...v1.21.5) (2026-08-28)
+
+
+### Bug Fixes
+
+* specify pnpm version in Dockerfile to ensure compatibility with Alpine ([5cdb27e](https://github.com/teojs/clock-dashboard/commit/5cdb27eb5566df9781c46e3d039724143a9ddc7a))
+
 ### [1.21.4](https://github.com/teojs/clock-dashboard/compare/v1.21.3...v1.21.4) (2026-08-28)
 
 ### [1.21.3](https://github.com/teojs/clock-dashboard/compare/v1.21.2...v1.21.3) (2026-08-21)
