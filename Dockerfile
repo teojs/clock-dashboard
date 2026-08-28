@@ -4,7 +4,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # 安装 pnpm
-RUN npm install -g pnpm
+RUN npm install -g pnpm@9.6.0
 
 # 复制依赖文件
 COPY package.json pnpm-lock.yaml ./
