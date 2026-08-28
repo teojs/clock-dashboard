@@ -159,6 +159,7 @@ defineExpose({ save, reset })
             v-model="weatherDraft.qweatherKey"
             type="password"
             autocomplete="off"
+            required
             :placeholder="t('weatherSettings.qweatherKeyPlaceholder')"
             class="settings-input placeholder:text-white/20"
           >
@@ -169,6 +170,7 @@ defineExpose({ save, reset })
             v-model="weatherDraft.qweatherHost"
             type="text"
             autocomplete="off"
+            required
             :placeholder="t('weatherSettings.qweatherHostPlaceholder')"
             class="settings-input placeholder:text-white/20"
           >

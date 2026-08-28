@@ -1,8 +1,6 @@
 import type { AirQualityApiResponse, WeatherApiResponse } from './types'
 import { mapQweatherIconToWmo } from '../utils/weather'
 
-const DEFAULT_QWEATHER_HOST = 'https://devapi.qweather.com'
-
 interface QweatherNowResponse {
   code: string
   now?: {
@@ -42,22 +40,29 @@ interface QweatherHourlyResponse {
   }>
 }
 
-interface QweatherAirResponse {
+interface QweatherAirIndex {
   code: string
-  now?: {
-    aqi: string
+  aqi: number
+}
+
+interface QweatherAirV1Response {
+  indexes?: QweatherAirIndex[]
+  error?: {
+    status?: number
+    title?: string
+    detail?: string
   }
 }
 
 export interface QweatherFetchOptions {
   key: string
-  host?: string
+  host: string
   lang?: string
 }
 
 function normalizeHost(host?: string): string {
   const trimmed = (host || '').trim().replace(/\/+$/, '')
-  if (!trimmed) return DEFAULT_QWEATHER_HOST
+  if (!trimmed) throw new Error('QWeather API Host is required')
   if (/^https?:\/\//i.test(trimmed)) return trimmed
   return `https://${trimmed}`
 }
@@ -68,6 +73,28 @@ function toQweatherLang(locale?: string): string {
   if (locale.startsWith('zh')) return 'zh'
   if (locale.startsWith('en')) return 'en'
   return locale.split('-')[0]
+}
+
+async function toQweatherHttpError(path: string, response: Response): Promise<Error> {
+  try {
+    const body = await response.json() as QweatherAirV1Response & { code?: string }
+    const detail = body.error?.detail || body.error?.title || body.code || response.statusText
+    return new Error(`QWeather API error (${path}): ${detail}`)
+  }
+  catch {
+    return new Error(`QWeather API error (${path}): ${response.statusText}`)
+  }
+}
+
+function pickLocalAqi(indexes?: QweatherAirIndex[]): number {
+  if (!indexes?.length) return 0
+  const preferred = ['cn-mee', 'cn-mee-1h', 'us-epa', 'us-epa-nc']
+  for (const code of preferred) {
+    const found = indexes.find(item => item.code === code)
+    if (found && Number.isFinite(found.aqi)) return Number(found.aqi)
+  }
+  const numeric = indexes.find(item => item.code !== 'qaqi' && Number.isFinite(item.aqi))
+  return Number(numeric?.aqi || 0)
 }
 
 function assertQweatherOk(code: string, path: string) {
@@ -93,7 +120,7 @@ async function qweatherGet<T extends { code: string }>(
   // 不设置自定义请求头，避免触发 CORS 预检（iOS 12 等旧 WebKit 会因此失败）
   const response = await fetch(url.toString())
   if (!response.ok) {
-    throw new Error(`QWeather API error: ${response.statusText}`)
+    throw await toQweatherHttpError(path, response)
   }
 
   const data = await response.json() as T
@@ -192,12 +219,21 @@ export async function fetchQweatherAirQualityData(
   lon: number,
   options: QweatherFetchOptions,
 ): Promise<AirQualityApiResponse> {
-  const data = await qweatherGet<QweatherAirResponse>('/v7/air/now', options, {
-    location: toLocation(lat, lon),
-  })
+  const path = `/airquality/v1/current/${lat.toFixed(2)}/${lon.toFixed(2)}`
+  const url = new URL(path, `${normalizeHost(options.host)}/`)
+  url.searchParams.set('key', options.key)
+  url.searchParams.set('lang', toQweatherLang(options.lang))
+
+  const response = await fetch(url.toString())
+  const data = await response.json() as QweatherAirV1Response
+  if (!response.ok) {
+    const detail = data.error?.detail || data.error?.title || response.statusText
+    throw new Error(`QWeather API error (${path}): ${detail}`)
+  }
+
   return {
     current: {
-      us_aqi: Number(data.now?.aqi || 0),
+      us_aqi: pickLocalAqi(data.indexes),
     },
   }
 }

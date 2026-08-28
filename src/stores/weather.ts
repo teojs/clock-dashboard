@@ -47,7 +47,7 @@ export const useWeatherStore = defineStore('weather', () => {
         lang: language.value,
       }
 
-      if (useQweather && !qweatherOptions.key) {
+      if (useQweather && (!qweatherOptions.key || !qweatherOptions.host)) {
         weatherData.value = null
         airQualityData.value = null
         weatherInfo.value.text = i18n.global.t('weather.status.missingKey')
