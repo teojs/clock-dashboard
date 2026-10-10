@@ -55,7 +55,20 @@ export const useConfigStore = defineStore('config', () => {
     showFestival: true,
   })
 
+  const wallpaperConfig = ref({
+    /** 启用自定义壁纸 */
+    enabled: false,
+    /** 遮罩暗度 0-0.9 */
+    dim: 0.4,
+    /** 模糊半径（px） */
+    blur: 0,
+  })
+  /** 壁纸图片变更计数，用于通知 App 重新读取 IndexedDB */
+  const wallpaperVersion = ref(0)
+
   return {
+    wallpaperConfig,
+    wallpaperVersion,
     haLayout,
     haConfig,
     clockConfig,
@@ -67,6 +80,6 @@ export const useConfigStore = defineStore('config', () => {
   }
 }, {
   persist: {
-    omit: ['showDrawer', 'activeTab'],
+    omit: ['showDrawer', 'activeTab', 'wallpaperVersion'],
   },
 })

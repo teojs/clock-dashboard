@@ -60,7 +60,15 @@
     "clockOnlyMode": "僅顯示時鐘",
     "compactMode": "緊湊模式",
     "showLunar": "顯示農曆",
-    "showFestival": "顯示節假日"
+    "showFestival": "顯示節假日",
+    "wallpaper": "桌布",
+    "wallpaperEnabled": "啟用自訂桌布",
+    "wallpaperUpload": "上傳本機圖片或影片",
+    "wallpaperRemove": "移除桌布",
+    "wallpaperError": "圖片無法讀取",
+    "wallpaperTooLarge": "儲存空間不足，無法儲存此檔案",
+    "wallpaperDim": "遮罩暗度",
+    "wallpaperBlur": "背景模糊"
   },
   "clockSettings": {
     "color": "時鐘顏色",

@@ -60,7 +60,15 @@
     "clockOnlyMode": "Clock Only",
     "compactMode": "Compact Mode",
     "showLunar": "Show Lunar Calendar",
-    "showFestival": "Show Festivals"
+    "showFestival": "Show Festivals",
+    "wallpaper": "Wallpaper",
+    "wallpaperEnabled": "Use custom wallpaper",
+    "wallpaperUpload": "Upload local image or video",
+    "wallpaperRemove": "Remove wallpaper",
+    "wallpaperError": "Unable to read the image",
+    "wallpaperTooLarge": "Not enough storage space for this file",
+    "wallpaperDim": "Dimming",
+    "wallpaperBlur": "Background blur"
   },
   "clockSettings": {
     "color": "Clock Color",
